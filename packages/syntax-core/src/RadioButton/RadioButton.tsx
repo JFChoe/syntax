@@ -60,19 +60,31 @@ const RadioButton = ({
   const [isFocused, setIsFocused] = useState(false);
   const { isFocusVisible } = useFocusVisible();
 
+  let borderStyle = styles.borderColor;
+
+  let borderWidth = styles.borderUnchecked;
+  if (checked && size === "sm") {
+    borderWidth = styles.borderCheckedSm;
+  } else if (checked && size === "md") {
+    borderWidth = styles.borderCheckedMd;
+  }
+
   return (
-    <label
-      className={classnames(styles.radioButton, {
-        [styles.smBase]: size === "sm",
-        [styles.mdBase]: size === "md",
-      })}
+    <div
+      className={classnames(
+        borderStyle,
+        borderWidth,
+        styles[size],
+        styles.radioButton,
+        {
+          [styles.focusedRadioButton]: isFocused && isFocusVisible,
+        },
+      )}
+      data-testid="radio-button-div"
     >
       <input
         type="radio"
-        className={classnames(styles.radioStyleOverride, {
-          [styles.smOverride]: size === "sm",
-          [styles.mdOverride]: size === "md",
-        })}
+        className={styles.radioStyleOverride}
         checked={checked}
         onChange={onChange}
         disabled={disabled}
@@ -84,37 +96,15 @@ const RadioButton = ({
           setIsFocused(false);
         }}
       />
-      {checked ? (
-        <div
-          className={classnames(styles.outer, styles[size], {
-            [styles.errorOuterBackgroundColor]: error,
-            [styles.outerBackgroundColor]: !error,
-            [styles.focusedRadioButton]: isFocused && isFocusVisible && checked,
-          })}
+      <label>
+        <Typography
+          size={size === "md" ? 200 : 100}
+          color={error ? "destructive-primary" : "gray800"}
         >
-          <div
-            className={classnames(styles.circle, {
-              [styles.smInner]: size === "sm",
-              [styles.mdInner]: size === "md",
-            })}
-          />
-        </div>
-      ) : (
-        <div
-          className={classnames(styles.background, styles[size], {
-            [styles.errorBorderColor]: error,
-            [styles.borderColor]: !error,
-            [styles.focusedRadioButton]: isFocused && isFocusVisible && checked,
-          })}
-        />
-      )}
-      <Typography
-        size={size === "md" ? 200 : 100}
-        color={error ? "destructive-primary" : "gray800"}
-      >
-        {label}
-      </Typography>
-    </label>
+          {label}
+        </Typography>
+      </label>
+    </div>
   );
 };
 
